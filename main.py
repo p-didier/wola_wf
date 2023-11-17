@@ -46,7 +46,6 @@ def main():
     Ns = int(N_DFT * (1 - OVLP))
     outWOLA = np.zeros_like(yWOLA)
     nUpRyy, nUpRnn = np.zeros(len(f)), np.zeros(len(f))
-    updateStartedAt = np.zeros(len(f))
     for l in range(len(t)):
         print(f'Frame {l+1}/{len(t)}')
         # Loop over frequency bins
@@ -66,10 +65,8 @@ def main():
             # Compute Wiener filter
             if nUpRyy[kappa] > 0 and nUpRnn[kappa] > 0:
                 wf = 1 / Ryy[kappa] * (Ryy[kappa] - Rnn[kappa])
-                if updateStartedAt[kappa] == 0:
-                    updateStartedAt[kappa] = l
             else:
-                wf = 1
+                wf = 1  # no update yet, so no filtering
             # Apply Wiener filter
             outWOLA[kappa, l] = wf * yWOLA[kappa, l]
     # Go back to time domain
